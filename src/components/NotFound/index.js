@@ -1,7 +1,6 @@
 import Header from '../Header'
 import Sidebar from '../Sidebar'
 import ThemeContext from '../../context/ThemeContext'
-
 import {
   NotFoundPageContainers,
   NotFoundImage,

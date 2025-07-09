@@ -5,6 +5,7 @@ import {HiFire} from 'react-icons/hi'
 import {IoMdSquare} from 'react-icons/io'
 import Header from '../Header'
 import Sidebar from '../Sidebar'
+import ThemeContext from '../../context/ThemeContext'
 import {
   TrendingPageContainers,
   TrendingPage,
@@ -69,83 +70,98 @@ class Trending extends Component {
   render() {
     const {trendingVideos, isLoading, hasError} = this.state
     return (
-      <>
-        <Header />
-        <TrendingPageContainers>
-          <Sidebar />
-          <TrendingPage data-testid="trending">
-            {isLoading && (
-              <TrendingLoaderContainer data-testid="loader">
-                <Loader
-                  type="ThreeDots"
-                  color="#000000"
-                  height={50}
-                  width={50}
-                />
-              </TrendingLoaderContainer>
-            )}
-            {!isLoading && hasError && (
-              <TrendingErrorContainer>
-                <TrendingErrorImg
-                  src="https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png"
-                  alt="failure view"
-                />
-                <TrendingErrorMessage>
-                  Oops! Something Went Wrong
-                </TrendingErrorMessage>
-                <TrendingErrorInfo>
-                  We are having some trouble completing your request.
-                  <br />
-                  Please try again.
-                </TrendingErrorInfo>
-                <TrendingRetryBtn
-                  type="button"
-                  onClick={this.getTrendingResults}
-                >
-                  Retry
-                </TrendingRetryBtn>
-              </TrendingErrorContainer>
-            )}
-            {!isLoading && !hasError && (
-              <>
-                <TrendingHeadingContainer>
-                  <TrendingIcon>
-                    <HiFire size={20} />
-                  </TrendingIcon>
-                  <TrendingHeading>Trending</TrendingHeading>
-                </TrendingHeadingContainer>
-                <TrendingResultContainer>
-                  {trendingVideos.map(item => (
-                    <TrendingLinkItem to={`videos/${item.id}`}>
-                      <TrendingResultItemContainer>
-                        <TrendingImg
-                          src={item.thumbnailUrl}
-                          alt="video thumbnail"
-                        />
-                        <TrendingItemInfoContainer>
-                          <TrendingVideoTitle>{item.title}</TrendingVideoTitle>
-                          <TrendingChannelName>
-                            {item.channel.name}
-                          </TrendingChannelName>
-                          <TrendingViewsPublishedContainer>
-                            <TrendingViewsCount>
-                              {item.viewCount} views
-                            </TrendingViewsCount>
-                            <IoMdSquare size={5} color="#606060" />
-                            <TrendingPublishedAt>
-                              {item.publishedAt}
-                            </TrendingPublishedAt>
-                          </TrendingViewsPublishedContainer>
-                        </TrendingItemInfoContainer>
-                      </TrendingResultItemContainer>
-                    </TrendingLinkItem>
-                  ))}
-                </TrendingResultContainer>
-              </>
-            )}
-          </TrendingPage>
-        </TrendingPageContainers>
-      </>
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+          const loaderColor = isDarkTheme ? '#ffffff' : '#000000'
+          const errorImg = isDarkTheme
+            ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+            : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
+
+          return (
+            <>
+              <Header />
+              <TrendingPageContainers>
+                <Sidebar />
+                <TrendingPage data-testid="trending" isDarkTheme={isDarkTheme}>
+                  {isLoading && (
+                    <TrendingLoaderContainer data-testid="loader">
+                      <Loader
+                        type="ThreeDots"
+                        color={loaderColor}
+                        height={50}
+                        width={50}
+                      />
+                    </TrendingLoaderContainer>
+                  )}
+                  {!isLoading && hasError && (
+                    <TrendingErrorContainer>
+                      <TrendingErrorImg src={errorImg} alt="failure view" />
+                      <TrendingErrorMessage isDarkTheme={isDarkTheme}>
+                        Oops! Something Went Wrong
+                      </TrendingErrorMessage>
+                      <TrendingErrorInfo isDarkTheme={isDarkTheme}>
+                        We are having some trouble completing your request.
+                        <br />
+                        Please try again.
+                      </TrendingErrorInfo>
+                      <TrendingRetryBtn
+                        type="button"
+                        onClick={this.getTrendingResults}
+                      >
+                        Retry
+                      </TrendingRetryBtn>
+                    </TrendingErrorContainer>
+                  )}
+                  {!isLoading && !hasError && (
+                    <>
+                      <TrendingHeadingContainer isDarkTheme={isDarkTheme}>
+                        <TrendingIcon>
+                          <HiFire size={20} />
+                        </TrendingIcon>
+                        <TrendingHeading isDarkTheme={isDarkTheme}>
+                          Trending
+                        </TrendingHeading>
+                      </TrendingHeadingContainer>
+                      <TrendingResultContainer isDarkTheme={isDarkTheme}>
+                        {trendingVideos.map(item => (
+                          <TrendingLinkItem to={`videos/${item.id}`}>
+                            <TrendingResultItemContainer>
+                              <TrendingImg
+                                src={item.thumbnailUrl}
+                                alt="video thumbnail"
+                              />
+                              <TrendingItemInfoContainer>
+                                <TrendingVideoTitle isDarkTheme={isDarkTheme}>
+                                  {item.title}
+                                </TrendingVideoTitle>
+                                <TrendingChannelName isDarkTheme={isDarkTheme}>
+                                  {item.channel.name}
+                                </TrendingChannelName>
+                                <TrendingViewsPublishedContainer>
+                                  <TrendingViewsCount isDarkTheme={isDarkTheme}>
+                                    {item.viewCount} views
+                                  </TrendingViewsCount>
+                                  <IoMdSquare size={5} color="#606060" />
+                                  <TrendingPublishedAt
+                                    isDarkTheme={isDarkTheme}
+                                  >
+                                    {item.publishedAt}
+                                  </TrendingPublishedAt>
+                                </TrendingViewsPublishedContainer>
+                              </TrendingItemInfoContainer>
+                            </TrendingResultItemContainer>
+                          </TrendingLinkItem>
+                        ))}
+                      </TrendingResultContainer>
+                    </>
+                  )}
+                </TrendingPage>
+              </TrendingPageContainers>
+            </>
+          )
+        }}
+      </ThemeContext.Consumer>
     )
   }
 }

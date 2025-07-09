@@ -5,10 +5,8 @@ import {BiDislike} from 'react-icons/bi'
 import {RiPlayListAddFill} from 'react-icons/ri'
 import Cookies from 'js-cookie'
 import Loader from 'react-loader-spinner'
-import {Redirect} from 'react-router-dom'
 import Header from '../Header'
 import Sidebar from '../Sidebar'
-import ThemeContext from '../../context/ThemeContext'
 import SavedVideosContext from '../../context/SavedVideosContext'
 import {
   VideoItemDetailsPage,
@@ -61,9 +59,7 @@ class VideoItemDetails extends Component {
     const {id} = params
 
     const jwtToken = Cookies.get('jwt_token')
-    if (!jwtToken) {
-      return <Redirect to="/login" />
-    }
+
     const url = `https://apis.ccbp.in/videos/${id}`
     const options = {
       method: 'GET',

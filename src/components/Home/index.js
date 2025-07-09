@@ -60,9 +60,6 @@ class Home extends Component {
     console.log('Fetching...')
     const {searchInput} = this.state
     const jwtToken = Cookies.get('jwt_token')
-    if (jwtToken === undefined) {
-      return <Redirect to="/login" />
-    }
     const url = `https://apis.ccbp.in/videos/all?search=${searchInput}`
     const options = {
       method: 'GET',
@@ -102,110 +99,135 @@ class Home extends Component {
 
   render() {
     const {searchInput, resultList, isLoading, hasError} = this.state
-    const {total, videos} = resultList
+    const {videos} = resultList
     const jwtToken = Cookies.get('jwt_token')
     if (jwtToken === undefined) {
       return <Redirect to="/login" />
     }
 
     return (
-      <BgHomePage>
-        <Header />
-        <HomePageContainers data-testid="home">
-          <Sidebar />
-          <PopupAndResultsContainer>
-            <Banner />
-            <SearchResultsContainer>
-              <SearchContainer>
-                <SearchInput
-                  type="search"
-                  placeholder="Search"
-                  value={searchInput}
-                  onChange={this.onChangeSearchInput}
-                />
-                <SearchButton
-                  type="button"
-                  data-testid="searchButton"
-                  onClick={this.getSearchResults}
-                >
-                  <IoMdSearch size={20} />
-                </SearchButton>
-              </SearchContainer>
-              {isLoading && (
-                <LoaderContainer data-testid="loader">
-                  <Loader
-                    type="ThreeDots"
-                    color="#000000"
-                    height="50"
-                    width="50"
-                  />
-                </LoaderContainer>
-              )}
-              {!isLoading && hasError && (
-                <SearchResultErrorContainer>
-                  <ErrorImg
-                    src="https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png"
-                    alt="failure view"
-                  />
-                  <ErrorMsg>Oops! Something Went Wrong</ErrorMsg>
-                  <ErrorInfo>
-                    We are having some trouble completing your request.
-                    <br />
-                    Please try again.
-                  </ErrorInfo>
-                  <RetryBtn type="button" onClick={this.getSearchResults}>
-                    Retry
-                  </RetryBtn>
-                </SearchResultErrorContainer>
-              )}
-              {!isLoading && !hasError && videos.length === 0 && (
-                <NoResultsContainer>
-                  <NoResultImg
-                    src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png"
-                    alt="no videos"
-                  />
-                  <NoResultText>No Search Results Found</NoResultText>
-                  <NoResultInfo>
-                    Try different key words or remove search filter
-                  </NoResultInfo>
-                  <RetryBtn type="button" onClick={this.getSearchResults}>
-                    Retry
-                  </RetryBtn>
-                </NoResultsContainer>
-              )}
-              {!isLoading && !hasError && videos.length > 0 && (
-                <ResultsContainer>
-                  {videos.map(item => (
-                    <VideoItemLink to={`/videos/${item.id}`}>
-                      <ResultItemContainer key={item.id}>
-                        <ResultItemThumbnailImg
-                          src={item.thumbnailUrl}
-                          alt="video thumbnail"
+      <ThemeContext.Consumer>
+        {value => {
+          const {isDarkTheme} = value
+
+          return (
+            <BgHomePage isDarkTheme={isDarkTheme}>
+              <Header />
+              <HomePageContainers data-testid="home">
+                <Sidebar />
+                <PopupAndResultsContainer>
+                  <Banner />
+                  <SearchResultsContainer isDarkTheme={isDarkTheme}>
+                    <SearchContainer>
+                      <SearchInput
+                        type="search"
+                        placeholder="Search"
+                        value={searchInput}
+                        isDarkTheme={isDarkTheme}
+                        onChange={this.onChangeSearchInput}
+                      />
+                      <SearchButton
+                        type="button"
+                        data-testid="searchButton"
+                        onClick={this.getSearchResults}
+                      >
+                        <IoMdSearch size={20} />
+                      </SearchButton>
+                    </SearchContainer>
+                    {isLoading && (
+                      <LoaderContainer data-testid="loader">
+                        <Loader
+                          type="ThreeDots"
+                          color={isDarkTheme ? '#ffffff' : '#000000'}
+                          height="50"
+                          width="50"
                         />
-                        <ResultItemInfoContainer>
-                          <ResultItemChannelImg
-                            src={item.channel.profileImageUrl}
-                            alt="channel logo"
-                          />
-                          <ResultItemTextInfoContainer>
-                            <ItemTitle>{item.title}</ItemTitle>
-                            <ChannelName>{item.channel.name}</ChannelName>
-                            <ViewsAndPublishedInfoContainer>
-                              <ViewsCount>{item.viewCount} views</ViewsCount>
-                              <IoMdSquare size={5} color="#606060" />
-                              <PublishedAt>{item.publishedAt}</PublishedAt>
-                            </ViewsAndPublishedInfoContainer>
-                          </ResultItemTextInfoContainer>
-                        </ResultItemInfoContainer>
-                      </ResultItemContainer>
-                    </VideoItemLink>
-                  ))}
-                </ResultsContainer>
-              )}
-            </SearchResultsContainer>
-          </PopupAndResultsContainer>
-        </HomePageContainers>
-      </BgHomePage>
+                      </LoaderContainer>
+                    )}
+                    {!isLoading && hasError && (
+                      <SearchResultErrorContainer>
+                        <ErrorImg
+                          src={
+                            isDarkTheme
+                              ? 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-dark-theme-img.png'
+                              : 'https://assets.ccbp.in/frontend/react-js/nxt-watch-failure-view-light-theme-img.png'
+                          }
+                          alt="failure view"
+                        />
+                        <ErrorMsg isDarkTheme={isDarkTheme}>
+                          Oops! Something Went Wrong
+                        </ErrorMsg>
+                        <ErrorInfo isDarkTheme={isDarkTheme}>
+                          We are having some trouble completing your request.
+                          <br />
+                          Please try again.
+                        </ErrorInfo>
+                        <RetryBtn type="button" onClick={this.getSearchResults}>
+                          Retry
+                        </RetryBtn>
+                      </SearchResultErrorContainer>
+                    )}
+                    {!isLoading && !hasError && videos.length === 0 && (
+                      <NoResultsContainer>
+                        <NoResultImg
+                          src="https://assets.ccbp.in/frontend/react-js/nxt-watch-no-search-results-img.png"
+                          alt="no videos"
+                        />
+                        <NoResultText isDarkTheme={isDarkTheme}>
+                          No Search Results Found
+                        </NoResultText>
+                        <NoResultInfo isDarkTheme={isDarkTheme}>
+                          Try different key words or remove search filter
+                        </NoResultInfo>
+                        <RetryBtn type="button" onClick={this.getSearchResults}>
+                          Retry
+                        </RetryBtn>
+                      </NoResultsContainer>
+                    )}
+                    {!isLoading && !hasError && videos.length > 0 && (
+                      <ResultsContainer>
+                        {videos.map(item => (
+                          <VideoItemLink to={`/videos/${item.id}`}>
+                            <ResultItemContainer key={item.id}>
+                              <ResultItemThumbnailImg
+                                src={item.thumbnailUrl}
+                                alt="video thumbnail"
+                              />
+                              <ResultItemInfoContainer>
+                                <ResultItemChannelImg
+                                  src={item.channel.profileImageUrl}
+                                  alt="channel logo"
+                                />
+                                <ResultItemTextInfoContainer>
+                                  <ItemTitle isDarkTheme={isDarkTheme}>
+                                    {item.title}
+                                  </ItemTitle>
+                                  <ChannelName isDarkTheme={isDarkTheme}>
+                                    {item.channel.name}
+                                  </ChannelName>
+                                  <ViewsAndPublishedInfoContainer>
+                                    <ViewsCount isDarkTheme={isDarkTheme}>
+                                      {item.viewCount} views
+                                    </ViewsCount>
+                                    <IoMdSquare size={5} color="#606060" />
+                                    <PublishedAt isDarkTheme={isDarkTheme}>
+                                      {item.publishedAt}
+                                    </PublishedAt>
+                                  </ViewsAndPublishedInfoContainer>
+                                </ResultItemTextInfoContainer>
+                              </ResultItemInfoContainer>
+                            </ResultItemContainer>
+                          </VideoItemLink>
+                        ))}
+                      </ResultsContainer>
+                    )}
+                  </SearchResultsContainer>
+                </PopupAndResultsContainer>
+              </HomePageContainers>
+            </BgHomePage>
+          )
+        }}
+      </ThemeContext.Consumer>
     )
   }
 }
